@@ -1,0 +1,44 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: user-dcpe
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: dcpe
+    container_name: ec-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - dcpe
+
+  mongo:
+    image: mongo:4.4.10
+    container_name: ec-mongo
+    restart: unless-stopped
+    volumes:
+      - ./docker-compose/mongo:/docker-entrypoint-initdb.d
+      - mongo_volume:/data/db
+
+  nginx:
+    image: nginx:alpine
+    container_name: ec-nginx
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - dcpe
+
+networks:
+  dcpe:
+    driver: bridge
+
+volumes:
+  mongo_volume:
