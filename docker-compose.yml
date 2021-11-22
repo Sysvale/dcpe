@@ -10,7 +10,7 @@ services:
     image: dcpe
     container_name: ec-app
     restart: unless-stopped
-    working_dir: /var/www/
+    working_dir: /var/www/dcpe
     volumes:
       - ./:/var/www
     networks:
@@ -23,6 +23,8 @@ services:
     volumes:
       - ./docker-compose/mongo:/docker-entrypoint-initdb.d
       - mongo_volume:/data/db
+    networks:
+      - dcpe
 
   nginx:
     image: nginx:alpine
