@@ -12,13 +12,16 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip \
-    unzip
+    unzip \
+    libcurl4-openssl-dev \
+    pkg-config \
+    libssl-dev
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN pecl install mongodb-1.10.0 \
+RUN pecl install mongodb \
     && docker-php-ext-enable mongodb
 
 # Install nodejs and npm
