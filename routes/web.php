@@ -10,7 +10,7 @@ Route::post('/login', [LoginController::class, 'authenticate']);
 
 Route::get('/register', [RegisterController::class, 'index'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
-Route::post('register/confirmation/:id', [RegisterController::class, 'sendMailConfirmation'])->name('register.confirmation');
+Route::get('register/confirmation/{id}', [RegisterController::class, 'registerConfirmation'])->name('register.confirmation');
 
 // $user = new stdClass();
 // $user->name = "Rodrigo Tester";

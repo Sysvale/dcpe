@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 use App\Mail\EmailConfirm;
 use App\Constants\UserRoles;
@@ -74,5 +75,18 @@ class RegisterController extends Controller
 
     public function sendMailConfirmation($user){
         return Mail::send(new EmailConfirm($user));
+    }
+
+    public function registerConfirmation($id){
+        $user = User::find($id);
+
+        if ($user && $user->email_verified_at == null){
+            $user->email_verified_at = Carbon::now();
+            $user->save();
+
+            $response = ["messege" => "Email confirmado com sucesso!", "success" => true];
+        } else $response = ["messege" => "Email já confirmado.", "success" => false];
+
+        return view('auth.registerConfirm', ['response' => $response]);
     }
 }
