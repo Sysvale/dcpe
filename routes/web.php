@@ -1,9 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DoubtsController;
 
 Route::get('/login', [LoginController::class, 'loginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'authenticate']);
@@ -28,20 +31,20 @@ Route::prefix('')->group(function(){
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     
     // // retorna os dados do usuário
-    // Route::get('user/', [UserController::class, 'index']);
+    Route::get('user', [UserController::class, 'index']);
+
+    // verifica se o usuário já mandou alguma dúvida
+    Route::get('user/doubts', [DoubtsController::class, 'getAll']);
+    Route::post('user/doubts/add', [DoubtsController::class, 'add']);
+    Route::get('user/doubts/mr', [DoubtsController::class, 'markAsRead']);
 });
 
-// Route::get('{any}', function () {
-//     $user = Auth::user();
+Route::fallback(function(){
+    $user = Auth::user();
 
-//     if ($user) {
-//         return view('index', ['user' => $user]);
-//     } else {
-//         return redirect('login');
-//     }
-// })->where('any', '(.*)');
-
-
-// Route::fallback(function(){
-//     return redirect('login');
-// });
+    if ($user) {
+        return view('index');
+    } else {
+        return redirect('login');
+    }
+});
