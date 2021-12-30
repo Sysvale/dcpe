@@ -47,7 +47,6 @@ class RegisterController extends Controller
         $this->sendMailConfirmation($user);
 
         // Auth::login($user);
- 
         return redirect()->route('home');
  
     }
@@ -69,7 +68,7 @@ class RegisterController extends Controller
             'email_verified_at' => null,
             'password' => Hash::make($data['password']),
             'roles' => UserRoles::PATIENT,
-            'cover' => asset(Storage::url('images/default-user.png')),
+            'cover' => 'images/default-user.png',
         ]);
     }
 

@@ -4,13 +4,16 @@ import DiagnosisMainPage from '../../modules/diagnosis/pages/DiagnosisMainPage';
 import ProntuaryMainPage from '../../modules/prontuary/pages/ProntuaryMainPage';
 import MessagesMainPage from '../../modules/messages/pages/MessagesMainPage';
 import HomePage from '../../modules/home/pages/HomePage';
+import ProfessionalView from '../../modules/prontuary/pages/ProfessionalView';
+import ChatFollowUp from '../../modules/messages/pages/ChatFollowUp';
 
 import { 
     NotFoundPage,
 } from '../common/';
 
-import HomeRoutes from '../../modules/home/routes';
 import MessagesRoutes from '../../modules/messages/routes';
+import DiagnosisRoutes from '../../modules/diagnosis/routes';
+import ProntuaryRoutes from '../../modules/prontuary/routes';
 
 import * as roles from '../constants/userRoles';
 
@@ -19,29 +22,16 @@ export default [
         path: '/',
         name: 'home',
         component: HomePage,
-        children: [
-            ...HomeRoutes,
-        ],
         meta: {
             alias: 'Página Inicial'
         },
-    },
-    {
-        path: '/diagnosis',
-        name: 'diagnosis',
-        component: DiagnosisMainPage,
-        meta: {
-            roles: [roles.PATIENT],
-            tags: ['modules.diagnosis'],
-            alias: 'Autodiagnóstico',
-        }
     },
     {
         path: '/info',
         name: 'info',
         component: InfoMainPage,
         meta: {
-            roles: [roles.PATIENT],
+            roles: [roles.PATIENT, roles.PROFESSIONAL],
             tags: ['modules.info'],
             alias: 'Informações',
         }
@@ -57,14 +47,37 @@ export default [
         }
     },
     {
-        path: '/prontuary',
+        path: '/prontuary/home',
         name: 'prontuary',
         component: ProntuaryMainPage,
+        children: [
+            ...ProntuaryRoutes,
+        ],
         meta: {
             roles: [roles.PATIENT],
             tags: ['modules.prontuary'],
             alias: 'Meu Prontuário',
         }
+    },
+    {
+        path: '/prontuary/:id/view',
+        name: 'prontuary.view',
+        component: ProfessionalView,
+        meta: {
+            roles: [roles.PROFESSIONAL],
+            tags: ['modules.prontuary.view'],
+            alias: 'Prontuário',
+        },
+    },
+    {
+        path: '/message/:id/chat/:chat',
+        name: 'message.patient',
+        component: ChatFollowUp,
+        meta: {
+            roles: [roles.PROFESSIONAL],
+            tags: ['modules.message.patient'],
+            alias: 'Acompanhamento',
+        },
     },
     {
         path: '/messages',

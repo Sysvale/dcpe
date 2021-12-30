@@ -1,6 +1,9 @@
 import Root from './Root';
 import VueRouter from 'vue-router';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+import Vuelidate from 'vuelidate';
+import vueTopprogress from 'vue-top-progress';
+import VueTheMask from 'vue-the-mask';
 
 import Cuida from '@sysvale/cuida';
 
@@ -19,6 +22,9 @@ Vue.use(VueRouter);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(Cuida);
+Vue.use(Vuelidate);
+Vue.use(vueTopprogress);
+Vue.use(VueTheMask);
 
 Vue.component('header-title', HeaderTitle);
 
@@ -31,4 +37,7 @@ const app = new Vue({
     el: '#app',
     router,
     render: h => h(Root),
+    components: {
+        vueTopprogress,
+    }
 });

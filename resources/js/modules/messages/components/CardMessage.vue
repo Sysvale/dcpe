@@ -1,5 +1,6 @@
 <template>
-    <div class="card-msg" @click="redirect(`/messages/${id}`)">
+    <div>
+    <div class="card-msg" @click="redirectIfPossible()">
         <div class="msg-left-content">
             <div class="cover-msg">
                 <img :src="cover" alt="">
@@ -13,6 +14,7 @@
             <b-badge variant="dark">{{ badge }}</b-badge>
         </div>
     </div>
+    </div>
 </template>
 
 <script>
@@ -20,8 +22,9 @@ export default {
     name: 'CardMessage',
 
     props: {
+        role: String,
         id: {
-            type: Number,
+            type: String,
         },
         cover: {
             type: String,
@@ -39,12 +42,32 @@ export default {
             type: Number,
             default: 0,
         },
+        enable: {
+            type: Boolean,
+            default: false,
+        }
     },
     
     methods: {
-        redirect(path_name){
-            if (this.$route.path != path_name)
-                this.$router.push(path_name);
+        redirectIfPossible(){
+
+            if(this.role == 'patient'){
+                if (this.id == 0 || (this.id == 1 && this.enable)) this.$router.push({ name: 'chat.message', params: { id: this.id} });
+                else this.$bvToast.toast('Se você é portador da Doença de Chagas, atualize seu prontuário.',{
+                    title: 'Para portadores da Doença de Chagas',
+                    autoHideDelay: 5000,
+                    appendToast: false,
+                    variant: 'warning',
+                });
+            }
+
+            if (this.role == 'professional' && this.name == 'Responder dúvidas'){
+                this.$router.push({ name: 'doubt.messages' });
+            }
+
+            if (this.role == 'professional' && this.name == 'Acompanhamento'){
+                this.$router.push({ name: 'follow.request' });
+            }
         },
     },
 
@@ -58,18 +81,25 @@ export default {
     box-sizing: border-box;
 }
 
+.custom-toast {
+    position: absolute;
+}
+
 .card-msg {
-    background-color: #ddd;
-    height: 60px;
+    background-color: #F7F7F7;
+    height: 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
     padding-right: 20px;
+    border: 1px solid rgba(0, 0, 0, .1);
+    margin-bottom: 2px;
 }
 
 .msg-left-content {
     display: flex;
+    align-items: center;
 }
 
 .card-msg.read {
@@ -77,16 +107,16 @@ export default {
 }
 
 .card-msg:hover {
-    background-color: #ccc;
+    background-color: #E4E0E0;
     cursor: pointer;
 }
 
 .card-msg .cover-msg img {
-    width: 40px;
+    width: 55px;
 }
 
 .msg-info {
-    margin-left: 10px;
+    margin-left: 18px;
     color: rgb(82, 82, 82);
 }
 
