@@ -2,7 +2,7 @@
     <div>
 		<nav-bar/>
 		<b-container>
-        	<router-view :user="user"/>
+        	<router-view/>
 		</b-container>
     </div>
 </template>
@@ -15,23 +15,5 @@ export default {
 	components: {
 		NavBar,
 	},
-
-    data() {
-        return {
-            user: {},
-        };
-    },
-
-	mounted(){
-        axios.get('user').then(response => {
-            this.user = response.data;
-        });
-    },
-
-    // methods: {
-    //     backPage(){
-    //         this.$router.go(-1);
-    //     }
-    // },
 };
 </script>

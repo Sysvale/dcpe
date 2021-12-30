@@ -10,5 +10,7 @@ class FollowUp extends Model
         'id_user',
         'requested',
         'accepted_by',
+        'created_at',
+        'updated_at',
     ];
 }

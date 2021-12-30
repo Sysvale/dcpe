@@ -13,7 +13,7 @@
 
 <p>
     <strong>Botão não funciona?</strong> Então clique no link: 
-    <a href="#">https://tal.com</a>
+    <a href="http://localhost:8000/register/confirmation/">http://localhost:8000/register/confirmation/</a>
 </p>
 
 @component('mail::footer')

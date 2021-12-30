@@ -8,9 +8,9 @@ class FollowUpChat extends Model
 {
     protected $fillable = [
         'id_user',
-        'id_professional',
-        'sent_by',
+        'id_chat',
         'message',
-        'read',
+        'created_at',
+        'updated_at',
     ];
 }

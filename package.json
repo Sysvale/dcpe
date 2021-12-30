@@ -28,6 +28,9 @@
     },
     "dependencies": {
         "@sysvale/cuida": "^2.0.1",
-        "vue-feather-icons": "^5.1.0"
+        "vue-feather-icons": "^5.1.0",
+        "vue-the-mask": "^0.11.1",
+        "vue-top-progress": "^0.7.0",
+        "vuelidate": "^0.7.6"
     }
 }

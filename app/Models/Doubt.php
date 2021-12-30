@@ -6,14 +6,12 @@ use Jenssegers\Mongodb\Eloquent\Model;
 
 class Doubt extends Model
 {
-    // protected $connection = 'mongodb';
-
     protected $fillable = [
         'id_user',
+        'type', // type = 1 (enviado), type = 2 (recebido)
         'message',
         'status',
-        'answered',
-        'read',
-        'answered_by',
+        'created_at',
+        'updated_at',
     ];
 }

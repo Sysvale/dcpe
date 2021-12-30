@@ -10,7 +10,8 @@
 
 		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
 		<link rel="stylesheet" href="{{ asset('css/app.css') }}">
-		<script href="https://code.jquery.com/jquery-3.6.0.min.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.7.1/slick.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.7.1/slick-theme.css">
 	<body>
 		<div id="app">
 			<main class="py-4 d-flex h-100 relative align-items-center">
@@ -20,5 +21,8 @@
 
 		{{-- Load the application scripts --}}
 		<script src="{{ asset('js/app.js') }}"></script>
+		<script href="https://code.jquery.com/jquery-3.6.0.min.js" type="text/javascript"></script>
+		<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.7.1/slick.js"></script>
 	</body>
 </html>

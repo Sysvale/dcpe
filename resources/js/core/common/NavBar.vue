@@ -9,9 +9,14 @@
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav @click.prevent="redirect">
-                    <b-nav-item @click.prevent="redirect('/')">Início</b-nav-item>
-                    <b-nav-item @click.prevent="redirect('/diagnosis')">Autodiagnóstico</b-nav-item>
-                    <b-nav-item @click.prevent="redirect('/info')">Informações</b-nav-item>
+                    <b-nav-item @click.prevent="redirect('/')">
+                        <span v-if="role == 'sudo'">Gerência de Usuário</span>
+                        <span v-else>Início</span>
+                    </b-nav-item>
+                    <!-- <b-nav-item @click.prevent="redirect('/diagnosis/init')">Autodiagnóstico</b-nav-item> -->
+                    <b-nav-item v-if="role == 'patient'" @click.prevent="redirect('/prontuary/home')">Meu Prontuário</b-nav-item>
+                    <b-nav-item v-if="role != 'sudo'" @click.prevent="redirect('/info')">Informações</b-nav-item>
+                    <b-nav-item v-if="role != 'sudo'" @click.prevent="redirect('/messages')">Mensagens</b-nav-item>
                 </b-navbar-nav>
                 <b-navbar-nav class="ml-auto">
                     <b-nav-item-dropdown right>
@@ -19,8 +24,6 @@
                             <user-icon></user-icon>
                         </template>
                         <b-dropdown-item @click.prevent="redirect('/account')">Perfil</b-dropdown-item>
-                        <b-dropdown-item @click.prevent="redirect('/prontuary')">Prontuário</b-dropdown-item>
-                        <b-dropdown-item @click.prevent="redirect('/messages')">Mensagens <b-badge>5</b-badge></b-dropdown-item>
                         <b-dropdown-item @click="logout">Sair</b-dropdown-item>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
@@ -40,11 +43,18 @@ export default {
 
     data(){
         return {
+            role: '',
         };
     },
 
+    mounted(){
+        axios.get('/user/role').then((response) => {
+            this.role = response.data;
+        }).catch((error) => console.log("error"));
+    },
+
     methods:{
-        logout(){
+        async logout(){
             return axios.post('/logout').then(() => {
                 window.location.reload();
             });

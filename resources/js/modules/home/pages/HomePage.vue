@@ -1,222 +1,187 @@
 <template>
     <div>
-        <router-link :to="{ name: 'home.registration.step', params: { step: 1 } }">Registrar</router-link>
-        <router-link :to="{ name: 'home.welcome'}">Welcome</router-link>
-        <router-view/>
-        <div v-if="profileCompleted | completeCancel">
-            <header-title 
-                :title="'Bem vindo ao EloChagas, '+user.name"
-                :subtitle="'Alguma descrição aqui'"
-            ></header-title>
-            <div class="carousel-cards">
-                <div class="navigation-left" @click="handleLeftArrow">
-                    <chevron-left-icon size="1.5x"></chevron-left-icon>
-                </div>
-                <div class="navigation-right" @click="handleRightArrow">
-                    <chevron-right-icon size="1.5x"></chevron-right-icon>
-                </div>
-                <div class="cards">
-                    <div class="card-item">
-                        <b-card
-                            title="Faça seu auto-diagnóstico"
-                            img-src="https://static.wixstatic.com/media/00ef04_a77cef516d4e4158a6e5b21f4be411df~mv2.jpg/v1/fill/w_560,h_318,al_c,q_80,usm_0.66_1.00_0.01/autodiagnostico.webp"
-                            img-alt="Image"
-                            img-top
-                            tag="article"
-                            style="max-width: 20rem;"
-                            class="mb-2"
-                        >
-                            <b-card-text>
-                            Esse questionário vai te definir a necessidade de fazer uma testagem para Chagas agudo ou crônico.
-                            </b-card-text>
-
-                            <b-button href="#" variant="success">Responder</b-button>
-                        </b-card>
-                    </div>
-
-                    <div class="card-item">
-                        <b-card
-                            title="Precisa tirar dúvidas ou ter acompanhamento?"
-                            img-src="https://img.pebmed.com.br/wp-content/uploads/2016/11/relacao-medico-paciente.jpg.webp"
-                            img-alt="Image"
-                            img-top
-                            tag="article"
-                            style="max-width: 20rem;"
-                            class="mb-2"
-                        >
-                            <b-card-text>
-                            Acesse nosso chat para tirar dúvidas ou fazer um acompanhamento com profissionais da saúde.
-                            </b-card-text>
-
-                            <b-button href="#" variant="primary">Acessar</b-button>
-                        </b-card>
-                    </div>
-
-                    <div class="card-item">
-                        <b-card
-                            title="Saiba como identificar um barbeiro"
-                            img-src="https://www.revistacircuito.com/wp-content/uploads/2019/08/chagas-1.jpg"
-                            img-alt="Image"
-                            img-top
-                            tag="article"
-                            style="max-width: 20rem;"
-                            class="mb-2"
-                        >
-                            <b-card-text>
-                            Saiba de forma correta e segura como realizar a captura de um barbeiro e também onde levá-los.
-                            </b-card-text>
-
-                            <b-button href="#" variant="primary">Acessar</b-button>
-                        </b-card>
-                    </div>
-
-                    <div class="card-item">
-                        <b-card
-                            title="Saiba como identificar um barbeiro"
-                            img-src="https://www.revistacircuito.com/wp-content/uploads/2019/08/chagas-1.jpg"
-                            img-alt="Image"
-                            img-top
-                            tag="article"
-                            style="max-width: 20rem;"
-                            class="mb-2"
-                        >
-                            <b-card-text>
-                            Saiba de forma correta e segura como realizar a captura de um barbeiro e também onde levá-los.
-                            </b-card-text>
-
-                            <b-button href="#" variant="primary">Acessar</b-button>
-                        </b-card>
-                    </div>
-
-                    <div class="card-item">
-                        <b-card
-                            title="Saiba como identificar um barbeiro"
-                            img-src="https://www.revistacircuito.com/wp-content/uploads/2019/08/chagas-1.jpg"
-                            img-alt="Image"
-                            img-top
-                            tag="article"
-                            style="max-width: 20rem;"
-                            class="mb-2"
-                        >
-                            <b-card-text>
-                            Saiba de forma correta e segura como realizar a captura de um barbeiro e também onde levá-los.
-                            </b-card-text>
-
-                            <b-button href="#" variant="primary">Acessar</b-button>
-                        </b-card>
-                    </div>
-
-                </div>
-            </div>
+        <div v-if="isLoading" class="spinner-loading">
+            <b-spinner variant="success" label="Spinning"></b-spinner>
         </div>
         <div v-else>
             <header-title 
-                :title="'Complete seu cadastro'"
-                :subtitle="'Os dados serão salvos automaticamente'"
+                v-if="user.roles != 'sudo'"
+                :title="`Bem vindo ao EloChagas, ${user.name}`"
+                :subtitle="'Sistema voltado para portadores da Doença de Chagas'"
             ></header-title>
-            <cds-stepper
-                v-model="currentStepIndex"
-                :steps="steps"
-            />
         </div>
-        
-        <!-- <div style="margin-top: 80px;">
+        <div v-if="user.roles == 'patient'">
+            <div class="carousel-cards">
+                <div class="carousel">
+                    <div class="card-item" v-for="{ id, title, description, buttonName, buttonVariant, url, cover } in items" :key="id">
+                        <b-card
+                            :title="title"
+                            :img-src="cover"
+                            img-top
+                            tag="article"
+                            class="mb-2 self-card"
+                        >
+                            <b-card-text>{{ description }}</b-card-text>
 
-            <b-form v-if="show">
-            <b-form-group
-                id="input-group-1"
-                label="Email address:"
-                label-for="input-1"
-                description="We'll never share your email with anyone else."
-            >
-                <b-form-input
-                id="input-1"
-                v-model="form.email"
-                type="email"
-                placeholder="Enter email"
-                required
-                ></b-form-input>
-            </b-form-group>
+                            <b-button :href="url" :variant="buttonVariant">{{ buttonName }}</b-button>
+                        </b-card>
+                    </div>
+                </div>
+            </div>
 
-            <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
-                <b-form-input
-                id="input-2"
-                v-model="form.name"
-                placeholder="Enter name"
-                required
-                ></b-form-input>
-            </b-form-group>
+        </div>
+        <div v-else-if="user.roles == 'sudo'">
+            <header-title 
+                :title="`Gerência de usuários`"
+                :subtitle="'Lista de usuários ativos'"
+            ></header-title>
 
-            <b-form-group id="input-group-3" label="Food:" label-for="input-3">
-                <b-form-select
-                id="input-3"
-                v-model="form.food"
-                :options="foods"
-                required
-                ></b-form-select>
-            </b-form-group>
-
-            <b-form-group id="input-group-4" v-slot="{ ariaDescribedby }">
-                <b-form-checkbox-group
-                v-model="form.checked"
-                id="checkboxes-4"
-                :aria-describedby="ariaDescribedby"
-                >
-                <b-form-checkbox value="me">Check me out</b-form-checkbox>
-                <b-form-checkbox value="that">Check that out</b-form-checkbox>
-                </b-form-checkbox-group>
-            </b-form-group>
-
-            <b-button type="submit" variant="primary">Submit</b-button>
-            <b-button type="reset" variant="danger">Reset</b-button>
-            </b-form>
-        </div> -->
-
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col" v-for="item in fields" :key="item">
+                            <div v-if="item == 'Prontuário'">
+                                <center>{{ item }}</center>
+                            </div>
+                            <div v-else>
+                                {{ item }}
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="{ id, name, email, email_verified_at, roles } in users" :key="id">
+                        <td class="custom-table">{{ id }}</td>
+                        <td>{{ name }}</td>
+                        <td>{{ email }}</td>
+                        <td>{{ email_verified_at }}</td>
+                        <td>{{ roles }}</td>
+                        <td width="200"><center>
+                            <b-button variant="primary" @click="updateRole(id, roles)" v-b-tooltip.hover title="Alterar nível de acesso"><edit-icon size="1x" class="custom-class"></edit-icon></b-button>
+                            <b-button variant="danger" @click="deleteUser(id, name)" v-b-tooltip.hover title="Excluir usuário"><user-x-icon size="1x" class="custom-class"></user-x-icon></b-button>
+                        </center></td>
+                    </tr>
+                </tbody>
+            </table>
+            <modal-role :id="userId" :role="role" @update="getAllUsers"/>
+            <modal-delete :id="userId" :name="name" @update="getAllUsers"/>
+        </div>
+        <div v-else>
+            <h3>Pacientes</h3>
+            <div style="margin-top: 15px;">
+                <div v-if="hasPatients">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col" v-for="item in fieldsPatient" :key="item">
+                                    <div v-if="item == 'Ações'">
+                                        <center>{{ item }}</center>
+                                    </div>
+                                    <div v-else>
+                                        {{ item }}
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="{ id_patient, name } in patients" :key="id_patient">
+                                <td class="custom-table">{{ name }}</td>
+                                <td width="200"><center>
+                                    <b-button variant="primary" @click="$router.push(`/prontuary/${id_patient}/view`)" v-b-tooltip.hover title="Prontuário do paciente"><file-text-icon size="1x" class="custom-class"></file-text-icon></b-button>
+                                    <b-button variant="success" @click="$router.push(`/message/${id_patient}/chat/1`)" v-b-tooltip.hover title="Conversar com paciente"><message-square-icon size="1x" class="custom-class"></message-square-icon></b-button>
+                                </center></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div v-else>
+                    <b-alert variant="warning" show>Você não está acompanhando nenhum paciente.</b-alert>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script> 
 import axios from 'axios';
 import HeaderTitle from "../../../core/common/HeaderTitle";
-import { ChevronRightIcon, ChevronLeftIcon } from 'vue-feather-icons';
+import { ChevronRightIcon, ChevronLeftIcon, FileTextIcon, MessageSquareIcon, EditIcon, UserXIcon, } from 'vue-feather-icons';
+
+import ModalRole from '../components/ModalRole';
+import ModalDelete from '../components/ModalDelete';
 
 export default {
     components: { 
         HeaderTitle, 
         ChevronRightIcon,
         ChevronLeftIcon,
-    },
-
-    props: {
-        user: {
-            type: Object,
-            require: true,
-        },
+        FileTextIcon,
+        MessageSquareIcon,
+        EditIcon,
+        UserXIcon,
+        ModalRole,
+        ModalDelete,
     },
 
     data(){
         return {
-            selector: (el) => document.querySelector(el),
-            scrollX: 0,
-            maxScroll: 0,
-            profileCompleted: false, // pegar do banco de dados
-            completeCancel: true, // pegar do formulário
-
-            currentStepIndex: 1,
-            steps: [
-                {"label":"Prontuário","completed":false,"inProcessing":true,"error":false},
-                {"label":"Bandeira 2","completed":false,"inProcessing":false,"error":false},
-                {"label":"Bandeira 5","completed":false,"inProcessing":false,"error":false}
+            userId: '',
+            role: '',
+            name: '',
+            user: [],
+            hasPatients: true,
+            isLoading: true,
+            fields: ['ID', 'Nome', 'Email', 'Email Verificado', 'Role', 'Ações'],
+            fieldsPatient: ['Nome', 'Ações'],
+            patients: [],
+            users: [],
+            items: [
+                { 
+                    id: 0,
+                    title: 'Mantenha seu prontuário atualizado', 
+                    description: 'Os profissionais da saúde têm acesso ao seu prontuário, portanto, um prontuário mais atualizado vai ajudar ambas as partes.',
+                    buttonName: 'Atualizar',
+                    buttonVariant: 'success',
+                    url: '/prontuary/home',
+                    cover: 'https://static.wixstatic.com/media/00ef04_a77cef516d4e4158a6e5b21f4be411df~mv2.jpg/v1/fill/w_560,h_318,al_c,q_80,usm_0.66_1.00_0.01/autodiagnostico.webp',
+                },
+                { 
+                    id: 1,
+                    title: 'É portador da Doença de Chagas?', 
+                    description: 'Usuários portadores da DC podem solicitar acompanhamento médico por meio do chat.',
+                    buttonName: 'Solicitar',
+                    buttonVariant: 'success',
+                    url: '/messages',
+                    cover: 'https://static.wixstatic.com/media/00ef04_a77cef516d4e4158a6e5b21f4be411df~mv2.jpg/v1/fill/w_560,h_318,al_c,q_80,usm_0.66_1.00_0.01/autodiagnostico.webp',
+                },
+                { 
+                    id: 2,
+                    title: 'Saiba como capturar um "barbeiro" com segurança', 
+                    description: 'Achou um "barbeiro"? Todo cuidado na captura desse inseto é necessário, veja como capturá-lo com segurança.',
+                    buttonName: 'Acessar',
+                    buttonVariant: 'primary',
+                    url: '/info#8',
+                    cover: 'https://static.wixstatic.com/media/00ef04_a77cef516d4e4158a6e5b21f4be411df~mv2.jpg/v1/fill/w_560,h_318,al_c,q_80,usm_0.66_1.00_0.01/autodiagnostico.webp',
+                },
+                { 
+                    id: 3,
+                    title: 'Tire dúvidas com profissionais da saúde', 
+                    description: 'Tire suas dúvidas com profissionais da saúde à respeito da Doença de Chagas.',
+                    buttonName: 'Acessar',
+                    buttonVariant: 'primary',
+                    url: '/messages/0',
+                    cover: 'https://static.wixstatic.com/media/00ef04_a77cef516d4e4158a6e5b21f4be411df~mv2.jpg/v1/fill/w_560,h_318,al_c,q_80,usm_0.66_1.00_0.01/autodiagnostico.webp',
+                },
+                { 
+                    id: 4,
+                    title: 'Saiba mais sobre a Doença de Chagas', 
+                    description: 'Saiba mais sobre a Doença de Chagas na nossa aba de informações.',
+                    buttonName: 'Acessar',
+                    buttonVariant: 'primary',
+                    url: '/messages/0',
+                    cover: 'https://static.wixstatic.com/media/00ef04_a77cef516d4e4158a6e5b21f4be411df~mv2.jpg/v1/fill/w_560,h_318,al_c,q_80,usm_0.66_1.00_0.01/autodiagnostico.webp',
+                },
             ],
-            
-            form: {
-                email: '',
-                name: '',
-                food: null,
-                checked: []
-            },
-            foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
-            show: true
         };
     },
 
@@ -224,37 +189,122 @@ export default {
         document.title = `${this.$route.meta.alias} - Elo Chagas`;
     },
 
-    watch: {
-        currentStepIndex: function(){
-            
-        }
+    mounted(){
+        this.getUser();
     },
 
     methods: {
-        handleLeftArrow(){
-            this.scrollX += Math.round(window.innerWidth/2);
-            if (this.scrollX > 0) this.scrollX = 0;
-            this.selector('.cards').style.marginLeft = this.scrollX+'px';
+        getUser(){
+            axios.get('/user').then((response) => {
+                this.user = response.data;
+                console.log(this.user.roles);
+                if (this.user.roles == 'patient')
+                    this.jquery();
+                
+                if (this.user.roles == 'professional')
+                    this.getPatients();
+
+                if (this.user.roles == 'sudo')
+                    this.getAllUsers();
+            
+                this.isLoading = false;
+            }).catch((error) => {
+                console.log('Error HomePage: ', error);
+            });
         },
 
-        handleRightArrow(){
-            this.scrollX -= Math.round(window.innerWidth/2);
-            console.log(window.innerWidth);
-            if ((window.innerWidth - 1600) > this.scrollX){
-                this.scrollX = window.innerWidth - 2000;
-            }
-            this.selector('.cards').style.marginLeft = this.scrollX+'px';
+        jquery(){
+            $(function(){
+                verifyViewport();
+                applyStyleArrowCarousel();
+
+                $(window).resize(function() {
+                    $('.carousel').slick('unslick');
+                    verifyViewport();
+                    applyStyleArrowCarousel();
+                });
+
+                function verifyViewport(){
+                    let viewportWidht = $(window).width();
+
+                    if (viewportWidht >= 768 && viewportWidht < 994){
+                        resizeCarousel(2);
+                    } else if (viewportWidht < 768){
+                        let cardItem = document.querySelectorAll(".self-card");
+                        
+                        cardItem.forEach((el) => {
+                            el.style.width = "100%";
+                        });
+
+                        resizeCarousel(1);
+                    } else {
+                        resizeCarousel(3);
+                    }
+                }
+
+                function resizeCarousel(numItems, numScroll){
+                    $('.carousel').slick({
+                        autoplay: true,
+                        pauseOnDotsHover: true,
+                        dots: true,
+                        speed: 500,
+                        slidesToShow: numItems,
+                        slidesToScroll: 1,
+                    });
+                }
+
+                function applyStyleArrowCarousel(){
+                    $(".slick-arrow").css({
+                        backgroundColor: "rgba(158, 156, 156, 0.6)",
+                        height: "50px",
+                        width: "30px",
+                    });
+                }
+
+            });
         },
-    }
+
+        getPatients(){
+            axios.get('/professional/get/patients').then(response => {
+                this.patients = response.data;
+                this.hasPatients = (this.patients.length != 0);
+            }).catch(error => console.log('error'));
+        },
+
+        getAllUsers(){
+            axios.get('/user/get-all').then((response) => {
+                this.users = response.data;
+            }).catch(error => console.log('error'));
+        },
+
+        updateRole(id, roles){
+            this.userId = id;
+            this.role = roles;
+            this.$bvModal.show('modalRole');
+        },
+
+        deleteUser(id, name){
+            this.userId = id;
+            this.name = name;
+            this.$bvModal.show('modalDelete');
+        }
+    },
 };
 </script>
 
 <style lang="scss" scoped>
 $len: 320px;
 
+.custom-table {
+    background-color: rgb(250, 248, 248);
+}
+
+.spinner-loading{
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
 .carousel-cards {
-    overflow-x: hidden;
-    position: relative;
     padding: 0px 30px;
 }
 
@@ -274,26 +324,4 @@ $len: 320px;
     transform: scale(1);
 }
 
-.navigation-left,
-.navigation-right {
-    position: absolute;
-    width: 40px;
-    height: 100px;
-    background-color:rgba(158, 156, 156, 0.6);
-    z-index: 99;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    margin-top: 150px;
-    cursor: pointer;
-}
-
-.navigation-left {
-    left: 0;
-}
-
-.navigation-right {
-    right: 0;
-}
 </style>
